@@ -2,6 +2,12 @@
 
 pub use pallet::*;
 
+#[cfg(test)]
+mod mock;
+
+#[cfg(test)]
+mod tests;
+
 #[frame_support::pallet]
 pub mod pallet {
 	use frame_support::{dispatch::DispatchResult, pallet_prelude::*, sp_std::vec::Vec};
@@ -19,7 +25,7 @@ pub mod pallet {
 	pub struct Pallet<T>(_);
 
 	#[pallet::storage]
-	#[pallet::getter(fn something)]
+	#[pallet::getter(fn proof_by_id)]
 	pub type Proofs<T: Config> =
 		StorageMap<_, Blake2_128Concat, Vec<u8>, (T::AccountId, T::BlockNumber), ValueQuery>;
 
@@ -80,8 +86,7 @@ pub mod pallet {
 			let (owner, block_num) = Proofs::<T>::get(&proof);
 			ensure!(owner == sender, Error::<T>::NotProofOfOwner);
 
-			Proofs::<T>::remove(&proof);
-			Proofs::<T>::insert(&proof, (&receiver, block_num));
+			Proofs::<T>::mutate(&proof, |val| *val = (receiver.clone(), block_num));
 
 			Self::deposit_event(Event::ClaimTransfered(sender, receiver, proof));
 
