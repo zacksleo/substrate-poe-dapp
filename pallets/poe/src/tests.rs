@@ -51,6 +51,7 @@ fn revoke_claim_test() {
 			Error::<Test>::NotProofOfOwner
 		);
 		assert_ok!(PoeModule::revoke_claim(Origin::signed(sender), hash.clone()));
+		assert_eq!(Proofs::<Test>::contains_key(hash), false);
 	});
 }
 
