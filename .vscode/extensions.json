@@ -1,0 +1,9 @@
+{
+	"recommendations": [
+		"serayuzgur.crates",
+		"editorconfig.editorconfig",
+		"matklad.rust-analyzer",
+		"bungcip.better-toml",
+		"vadimcn.vscode-lldb"
+	]
+}
