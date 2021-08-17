@@ -1,7 +1,7 @@
 use crate as pallet;
 use frame_support::{impl_outer_event, parameter_types};
 use frame_system as system;
-use sp_core::{H256, sr25519, Pair};
+use sp_core::{H256};
 use sp_runtime::{
 	testing::Header,
 	traits::{BlakeTwo256, IdentityLookup},
@@ -45,7 +45,7 @@ impl system::Config for Test {
 	type BlockNumber = u64;
 	type Hash = H256;
 	type Hashing = BlakeTwo256;
-	type AccountId = sr25519::Public;
+	type AccountId = u64;
 	type Lookup = IdentityLookup<Self::AccountId>;
 	type Header = Header;
 	type Event = TestEvent;
@@ -71,10 +71,3 @@ pub fn new_test_ext() -> sp_io::TestExternalities {
 	ext.execute_with(|| System::set_block_number(1));
 	ext
 }
-
-pub fn account_key(s: &str) -> sr25519::Public {
-	sr25519::Pair::from_string(&format!("//{}", s), None)
-		.expect("static values are valid; qed")
-		.public()
-}
-
