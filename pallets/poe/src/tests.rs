@@ -12,8 +12,8 @@ fn create_claim_test() {
 		let hash = CLAIM_HASH.as_bytes().to_vec();
 		let sender = TEST_SENDER;
 		assert_ok!(PoeModule::create_claim(Origin::signed(sender), hash.clone()));
-		let (account_id, _) = <Proofs<Test>>::get(&hash);
-		assert_eq!(account_id, sender);
+
+		assert_eq!(Proofs::<Test>::get(&hash), (sender, frame_system::Pallet::<Test>::block_number()));
 
 		assert!(System::events()
 			.iter()
