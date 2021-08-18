@@ -234,6 +234,7 @@ impl pallet_timestamp::Config for Runtime {
 parameter_types! {
 	pub const ExistentialDeposit: u128 = 500;
 	pub const MaxLocks: u32 = 50;
+	pub const ProofMaxSize: u32 = 32;
 }
 
 impl pallet_balances::Config for Runtime {
@@ -272,6 +273,7 @@ impl pallet_template::Config for Runtime {
 }
 impl pallet_poe::Config for Runtime {
 	type Event = Event;
+	type ProofMaxSize = ProofMaxSize;
 }
 
 // Create the runtime by composing the FRAME pallets that were previously configured.

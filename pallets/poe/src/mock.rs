@@ -1,5 +1,5 @@
 use crate as pallet;
-use frame_support::{impl_outer_event, parameter_types};
+use frame_support::{parameter_types};
 use frame_system as system;
 use sp_core::{H256};
 use sp_runtime::{
@@ -18,20 +18,14 @@ frame_support::construct_runtime!(
 		UncheckedExtrinsic = UncheckedExtrinsic,
 	{
 		System: frame_system::{Pallet, Call, Config, Storage, Event<T>},
-		PoeModule: pallet::{Pallet, Call, Storage, Event<T>},
-	}
-);
-
-impl_outer_event!(
-	pub enum TestEvent for Test {
-		system<T>,
-		pallet<T>,
+		Poe: pallet::{Pallet, Call, Storage, Event<T>},
 	}
 );
 
 parameter_types! {
 	pub const BlockHashCount: u64 = 250;
 	pub const SS58Prefix: u8 = 42;
+	pub const ProofMaxSize: u32 = 10;
 }
 
 impl system::Config for Test {
@@ -48,7 +42,7 @@ impl system::Config for Test {
 	type AccountId = u64;
 	type Lookup = IdentityLookup<Self::AccountId>;
 	type Header = Header;
-	type Event = TestEvent;
+	type Event = Event;
 	type BlockHashCount = BlockHashCount;
 	type Version = ();
 	type PalletInfo = PalletInfo;
@@ -61,7 +55,8 @@ impl system::Config for Test {
 }
 
 impl pallet::Config for Test {
-	type Event = TestEvent;
+	type Event = Event;
+	type ProofMaxSize = ProofMaxSize;
 }
 
 // Build genesis storage according to the mock runtime.

@@ -18,6 +18,10 @@ pub mod pallet {
 	pub trait Config: frame_system::Config {
 		/// Because this pallet emits events, it depends on the runtime's definition of an event.
 		type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
+
+		/// proof size
+		#[pallet::constant]
+		type ProofMaxSize: Get<u32>;
 	}
 
 	#[pallet::pallet]
@@ -34,7 +38,7 @@ pub mod pallet {
 	#[pallet::generate_deposit(pub(super) fn deposit_event)]
 	pub enum Event<T: Config> {
 		ClaimCreated(T::AccountId, Vec<u8>),
-		ClaimRemoked(T::AccountId, Vec<u8>),
+		ClaimRevoked(T::AccountId, Vec<u8>),
 		ClaimTransfered(T::AccountId, T::AccountId, Vec<u8>),
 	}
 
@@ -44,6 +48,7 @@ pub mod pallet {
 		ProofAlreadyClaimed,
 		NoSuchProof,
 		NotProofOfOwner,
+		ProofOutOfMaxSize,
 	}
 
 	#[pallet::call]
@@ -53,6 +58,8 @@ pub mod pallet {
 			let who = ensure_signed(origin)?;
 
 			ensure!(!Proofs::<T>::contains_key(&proof), Error::<T>::ProofAlreadyClaimed);
+
+			ensure!(proof.len() <= T::ProofMaxSize::get() as usize, Error::<T>::ProofOutOfMaxSize);
 
 			Proofs::<T>::insert(&proof, (&who, <frame_system::Pallet<T>>::block_number()));
 
@@ -70,7 +77,7 @@ pub mod pallet {
 
 			Proofs::<T>::remove(&proof);
 
-			Self::deposit_event(Event::ClaimRemoked(who, proof));
+			Self::deposit_event(Event::ClaimRevoked(who, proof));
 			Ok(())
 		}
 
